@@ -18,7 +18,7 @@ import threading
 
 
 # Include cse 251 common Python files
-from CSE251HW import *
+from cse251HW import *
 
 # Global variable for counting the number of primes found
 prime_count = 0
@@ -63,5 +63,3 @@ if __name__ == '__main__':
     log.write(f'Numbers processed = {numbers_processed}')
     log.write(f'Primes found      = {prime_count}')
     log.stop_timer('Total time')
-
-
