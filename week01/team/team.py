@@ -18,7 +18,7 @@ import threading
 
 
 # Include cse 251 common Python files
-from cse251 import *
+from cse251HW import *
 
 # Global variable for counting the number of primes found
 prime_count = 0
