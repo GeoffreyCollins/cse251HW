@@ -43,7 +43,6 @@ def draw_square(tur, x, y, side, color='black'):
         tur.forward(side)
         tur.right(90)
 
-
 def draw_circle(tur, x, y, radius, color='red'):
     """Draw Circle"""
     steps = 10
@@ -75,7 +74,6 @@ def draw_rectangle(tur, x, y, width, height, color='blue'):
     tur.forward(height)
     tur.right(90)
 
-
 def draw_triangle(tur, x, y, side, color='green'):
     """Draw a triangle"""
     tur.move(x, y)
@@ -84,7 +82,7 @@ def draw_triangle(tur, x, y, side, color='green'):
     for _ in range(4):
         tur.forward(side)
         tur.left(120)
-
+    
 
 def draw_coord_system(tur, x, y, size=300, color='black'):
     """Draw corrdinate lines"""
@@ -94,32 +92,39 @@ def draw_coord_system(tur, x, y, size=300, color='black'):
         tur.backward(size)
         tur.left(90)
 
-def draw_squares(tur):
+def draw_squares(tur, lock):
     """Draw a group of squares"""
+    lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
             draw_square(tur, x - 50, y + 50, 100)
+    lock.release()
 
 
-def draw_circles(tur):
+def draw_circles(tur, lock):
     """Draw a group of circles"""
+    lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
             draw_circle(tur, x, y-2, 50)
+    lock.release()
 
-
-def draw_triangles(tur):
+def draw_triangles(tur, lock):
     """Draw a group of triangles"""
+    lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
             draw_triangle(tur, x-30, y-30+10, 60)
+    lock.release()
 
 
-def draw_rectangles(tur):
+def draw_rectangles(tur, lock):
     """Draw a group of Rectangles"""
+    lock.acquire()
     for x in range(-300, 350, 200):
         for y in range(-300, 350, 200):
             draw_rectangle(tur, x-10, y+5, 20, 15)
+    lock.release()
 
 
 def run_no_threads(tur, log, main_turtle):
@@ -175,27 +180,24 @@ def run_with_threads(tur, log, main_turtle):
     lock = threading.Lock()
 
     threads = []
-    t1 = threading.Thread(target=draw_squares, args=(tur,))
-    t2 = threading.Thread(target=draw_circles, args=(tur,))
-    t3 = threading.Thread(target=draw_triangles, args=(tur,))
-    t4 = threading.Thread(target=draw_rectangles, args=(tur,))
+    t1 = threading.Thread(target=draw_squares(tur, lock), args=(tur, lock))
+    t2 = threading.Thread(target=draw_circles(tur, lock), args=(tur, lock))
+    t3 = threading.Thread(target=draw_triangles(tur, lock), args=(tur, lock))
+    t4 = threading.Thread(target=draw_rectangles(tur, lock), args=(tur, lock))
 
     threads.append(t1)
     threads.append(t2)
     threads.append(t3)
     threads.append(t4)
     
-    
 
     log.step_timer('All drawing commands have been created')
 
     log.write(f'Number of Drawing Commands: {tur.get_command_count()}')
-    lock.acquire(tur)
 
     # Play the drawing commands that were created
     tur.play_commands(main_turtle)
     log.stop_timer('Total drawing time')
-    lock.release()
     tur.clear()
 
 
@@ -219,10 +221,10 @@ def main():
 
     # Test 1 - Drawing with no threads
     # remove the file 'drawpart1.txt' to stop drawing part 1
-    if os.path.exists('drawpart1.txt'):
-        run_no_threads(turtle251, log, main_turtle)
+    # if os.path.exists('drawpart1.txt'):
+      #  run_no_threads(turtle251, log, main_turtle)
     
-    main_turtle.clear()
+    # main_turtle.clear()
 
     # Test 2 - Drawing with threads
     run_with_threads(turtle251, log, main_turtle)
