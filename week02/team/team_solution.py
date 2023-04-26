@@ -29,7 +29,7 @@ class Request_thread(threading.Thread):
         if response.status_code == 200:
             self.response = response.json()
         else:
-            print('RESPONSE = ', response.status_code)
+            print("RESPONSE = ", response.status_code)
 
 
 class Deck:

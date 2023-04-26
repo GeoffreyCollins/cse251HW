@@ -2,7 +2,7 @@
 Course: CSE 251
 Lesson Week: 02 - Team Activity
 File: team.py
-Author: Brother Comeau
+Author: Geoffrey Collins
 
 Purpose: Playing Card API calls
 Website is: http://deckofcardsapi.com
@@ -27,7 +27,18 @@ from cse251 import *
 class Request_thread(threading.Thread):
     # TODO - Add code to make an API call and return the results
     # https://realpython.com/python-requests/
-    pass
+    def __init__(self, url):
+        threading.Thread.__init__(self)
+        self.url = url
+        self.response = {}
+
+    def run(self):
+        response = requests.get(self.url)
+
+        if response.status_code == 200:
+            self.response = response.json()
+        else:
+            print("RESPONSE = ", response.status_code)
 
 class Deck:
 
@@ -36,25 +47,31 @@ class Deck:
         self.reshuffle()
         self.remaining = 52
 
-
     def reshuffle(self):
-        print('Reshuffle Deck')
         # TODO - add call to reshuffle
-
+        shuffle = Request_thread(rf'https://deckofcardsapi.com/api/deck/{self.id}/shuffle/')
+        shuffle.start()
+        shuffle.join()
 
     def draw_card(self):
         # TODO add call to get a card
-        pass
+        draw_card = Request_thread(rf'https://deckofcardsapi.com/api/deck/{self.id}/draw/?count=1')
+        draw_card.start()
+        draw_card.join()
+        if draw_card.response != {}:
+            self.remaining = draw_card.response['remaining']
+            return draw_card.response['cards'][0]['code']
+        else:
+            return ''
+    
 
     def cards_remaining(self):
         return self.remaining
-
 
     def draw_endless(self):
         if self.remaining <= 0:
             self.reshuffle()
         return self.draw_card()
-
 
 if __name__ == '__main__':
 
@@ -63,7 +80,7 @@ if __name__ == '__main__':
     #        team_get_deck_id.py program once. You can have
     #        multiple decks if you need them
 
-    deck_id = 'ENTER ID HERE'
+    deck_id = '9ewv09uxqiky'
 
     # Testing Code >>>>>
     deck = Deck(deck_id)
@@ -72,4 +89,3 @@ if __name__ == '__main__':
         print(i, card, flush=True)
     print()
     # <<<<<<<<<<<<<<<<<<
-
