@@ -3,7 +3,7 @@
 Course: CSE 251
 Lesson Week: 03
 File: assignment.py
-Author: <Your Name>
+Author: Geoffrey Collins
 
 Purpose: Video Frame Processing
 

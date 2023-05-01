@@ -54,21 +54,54 @@ call_count = 0
 
 
 # TODO Add your threaded class definition here
+class Request_thread(threading.Thread):
 
+    def __init__(self, url):
+        # Call the Thread class's init function
+        threading.Thread.__init__(self)
+        self.url = url
+        self.response = {}
+
+    def run(self):
+        response = requests.get(self.url)
+        # Check the status code to see if the request succeeded.
+        if response.status_code == 200:
+            self.response = response.json()
+        else:
+            print("RESPONSE = ", response.status_code)
 
 # TODO Add any functions you need here
 
 
 def main():
+    call_count = 0
     log = Log(show_terminal=True)
     log.start_timer('Starting to retrieve data from the server')
 
     # TODO Retrieve Top API urls
-
-    # TODO Retireve Details on film 6
-
+    response = requests.get(TOP_API_URL)
+    if response.status_code == 200:
+      data = response.json()
+      film_data = (f'{data["films"]}6/')
+      # TODO Retrieve Details on film 6
+      response_movie = requests.get(film_data)
+      response_movie_data = response_movie.json()
+      character_count = len(response_movie_data["characters"])
+      vehicle_count = len(response_movie_data["vehicles"])
+      species_count = len(response_movie_data["species"])
+      planet_count = len(response_movie_data["planets"])
+      starship_count = len(response_movie_data["starships"])
+      print(f'Title: {response_movie_data["title"]}', "\n",
+            f'Director: {response_movie_data["director"]}', "\n",
+            f'Producer: {response_movie_data["producer"]}', "\n",
+            f'Release Date: {response_movie_data["release_date"]}', "\n",
+            f'Characters: {character_count}', "\n",
+            f'Planets: {planet_count}', "\n",
+            f'Starships: {starship_count}', "\n",
+            f'Vehicles: {vehicle_count}', "\n",
+            f'Species: {species_count}')
     # TODO Display results
-
+    
     log.stop_timer('Total Time To complete')
     log.write(f'There were {call_count} calls to the server')
     
